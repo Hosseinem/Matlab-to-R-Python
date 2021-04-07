@@ -1,6 +1,6 @@
 # Matlab to R & Python
 
-In this project, a matlab pipeline was converted into an R markdown and the network analysis was done by using Python in the markdown.  
+In this project, a matlab pipeline was converted into an R markdown while using Python for the network analysis.  
 This pipeline is a network analysis among some normal and cancer cells.  
 
 Professor Lorenzo Farina  

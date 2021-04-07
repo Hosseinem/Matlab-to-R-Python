@@ -1,0 +1,66 @@
+La presente cartella contiene dati di espressione ottenuti mediante RNA-Sequencing 
+ (tecnologia che misura l'espressione di tutti i geni di una cellula, sia codificanti che non-codificanti per proteine) 
+e miRNA-Sequencing (tecnologia che misura l'espressione di tutti i miRNA di una cellula)
+scaricati dalla banca dati The Cancer Genome Atlas (TCGA,  https://tcga-data.nci.nih.gov/tcga/) a Dicembre 2014
+e relativi a 14 tipi diversi di tumori.
+
+
+
+I 14 tipi di tumori sono stati selezionati rispetto al totale di 30+ tipi tumorali rappresentati nella 
+banca dati TCGA inquanto questi avevano a disposizione almeno 4 pazienti per i quali fossero 
+disponibili dati di espressione di tutti e 4 i seguenti tipi ("4wayData"): 
+
+1.a) Dati di RNA-Seq relativi a campioni Tumorali
+1.b) Dati di RNA-Seq relativi a campioni Normali
+2.a) Dati di miRNA-Seq relativi a campioni Tumorali
+2.b) Dati di miRNA-Seq relativi a campioni Normali
+
+
+
+La lista dei 14 tumori disponibili e la descrizione esplicita dell'acronimo a 4 lettere (es. ucec, thca ...)
+sono elencati nel file excel denominato "Summary__TCGA_expression_data.xls", anch'esso nella presente cartella.
+
+
+
+Per ognuno dei 14 tipi di tumori, i dati sono racchiusi in una sotto-cartella denominata
+con il codice a 4 lettere ("xxxx") del dato tumore (es. ucec, thca ...) e presentano la sequente 
+struttura di file:
+
+xxxx/				#==> sotto-cartella identificata dal codice a 4 lettere del dato tumore
+    /xxxx_miRNASeq		#==> sotto-sotto-cartella contente la matrice di dati di miRNASeq (espressione di 1047 precursori di miRNA)
+    /xxxx_RNASeq		#==> sotto-sotto-cartella contente la matrice di dati di RNASeq (espressione di 20531 geni, codificanti e non)
+    /Patients_with_4wayData	#==> sotto-sotto-cartella contente le liste di campioni dei pazienti con tutti e 4 i tipi di dati (1.a/b, 2.a/b)
+
+
+Nota 1: La matrice di espressione derivante da miRNA-Seq fornisce i livelli di espressione dei PRECURSORI di miRNA maturi.
+	Infatti i nomi delle righe sono del tipo: "hsa-let-7a-1", "hsa-mir-941-3" anzichè "hsa-let-7a" o "hsa-miR-941" (ricordate la differenza?)
+	Per sapere a quale miRNA maturo fà riferimento ciascun precursore, trovate in questa stessa cartella un secondo file excel
+	denominato "tcga2mirbase__mirnaid_map.xls" in cui è riportata una mappa di corrispondenza tra nome del precursore (es "hsa-let-7a-1")
+	e corrispondente identificativo del miRNA maturo (es. "hsa-let-7a").
+
+Nota 2:	Come uso questa informazione? Perchè mi viene fatta questa nota (nota 1)??
+	Potreste ad esempio chiedervi, qual'è l'espressione del miRNA "X" (es. miR-21) nella mia matrice di dati normali e tumorali? 
+	Questo miRNA cambia la sua espressione nel tumore che sto studiando?
+	L'azione più naturale per rispondere sarebbe di andare a estrarre dalle mie matrici di dati di miRNA-Seq, sia normale che tumorale, 
+	la riga relativa al miR-21. Potrei quindi calcolarne la media di espressione nei campioni tumorali, la media nei campioni normali
+	e valutare il fold change. Oltrechè effettuare un t-test o un wilcoxono sum rank test per stimare se l'eventuale variazione di 
+	espressione è significativa o meno.
+	Se però provo a seguire questa strada mi trovo di fronte al problema che non esiste nelle mie matrici di dati di espressione 
+	di miRNA-Seq una riga che si chiami "miR-21". Questo perchè come abbiamo detto nella matrice troverò piuttosto il nome del precursore
+	del miRNA maturo miR-21. Per sapere quale riga andare a guardare per conoscere l'espressione del miR-21 (== come si chiama il nome del 		precursore del miR-21 nelle mie	matrici di dati, normale e tumorale) mi basterà aprire il file excel "tcga2mirbase__mirnaid_map.xls" e
+	cercare il mio miRNA di interesse (miR-21) nella colonna denominata "miRNA_mature_product". Andando a leggere il valore corrispondente
+	nella colonna denominata "TCGA_PRECURSOR_ID" troverò il nome del precursore che mi indica la riga da selezionare nelle mie matrici di 
+	epressione di miRNA-Seq.
+	Un ultimissimo sforzo, due ultime puntualizzazioni: (1) Cosa devo cercare, "-3p" o "-5p"?? e (2) che vuol dire se nella colonna 	"miRNA_mature_product" trovo indicati 2 miRNA maturi anzichè uno solo? 
+	(1) In letteratura, negli articoli, troverete spesso parlare di miRNA senza specificare il nome completo (cioè comprensivo di
+	suffissi "-3p" o "-5p"). Questi due suffissi, che hanno sostiutito nella nomenclatura attuale la vecchia distinzione tra miR-X e miR-X-*
+	si riferiscono alla forma prevalente di un miRNA rispetto alla forma meno abbondante (che all'inizio veniva identificata come forma "star"
+	e indicata con un asterisco. Per sapere se la forma matura nella nomenclatura attuale è quella "-3p" o "-5p" l'unico modo è di andare a 	cercare il mio miRNA di interesse su miRBase (http://www.mirbase.org/). Ad esempio, nel caso il "miR-21" sia il mio miRNA di interesse, 	su miRBase cercherò "hsa-miR-21", e nella pagina corrispondente cercherò quale forma matura del miRNA aveva come precedente 		
+	identificativo ("previous ID") "hsa-miR-21". Ecco così scoperto che il nome attuale e completo del miR-21 è "hsa-miR-21-5p".
+	(2) Nella maggior parte dei casi ogni precursore di miRNA, pur potendo in teoria dare origine a 2 miRNA maturi, prosurrà un solo miRNA 		maturo come forma prevalente. In questi casi misurare l'espressione (== abbondanza) del precursore sarà come misurare l'abbondanza del 
+	miRNA maturo. Esistono però delle eccezioni (es: hsa-mir-28, che da origine a 2 miRNA maturi entrambi attivi: hsa-miR-28-3p e 
+	hsa-miR-28-5p). In questi casi, visto che i dati del TCGA non mi permettono di distinguere tra i 2 miRNA originati dal precursore, 
+	prenderò l'abbondanza del precursore come livello di espressione di entrambi i miRNA maturi possibili (infatti solo un esperimento potrà 
+	in ultima analisi risolvere questa ambiguità.
+
+
